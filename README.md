@@ -1,3 +1,3 @@
 # ec2-linux-runner
 
-Actions for managing an on-demand, EC2-based, self-hosted linux runner
+Composite actions for managing an on-demand, self-hosted linux runner (on EC2)
