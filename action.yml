@@ -1,0 +1,57 @@
+---
+name: Start EC2 runner
+description: Starts an EC2 self-hosted runner
+
+inputs:
+  aws-region:
+    description: AWS region
+    required: true
+  aws-access-key-id:
+    description: AWS access key ID
+    required: true
+  aws-secret-access-key:
+    description: AWS secret access key
+    required: true
+  github-token:
+    description: GitHub auth token
+    required: true
+  ami-id:
+    description: AMI id
+    required: true
+  instance-type:
+    description: EC2 instance type
+    required: true
+
+runs:
+  using: composite
+  steps:
+    - name: AWS auth
+      uses: aws-actions/configure-aws-credentials@v1
+      with:
+        aws-region: ${{ inputs.aws-region }}
+        aws-access-key-id: ${{ inputs.aws-access-key-id }}
+        aws-secret-access-key: ${{ inputs.aws-secret-access-key }}
+        
+    - name: Start runner
+      shell: bash
+      run: |
+        gh_token="$(gh api -X POST -H "Accept: application/vnd.github.v3+json" repos/{owner}/{repo}/actions/runners/registration-token | jq -r .token)"
+        user_data=$(cat <<HERE
+        #!/bin/bash
+        mkdir actions-runner && cd actions-runner
+        arch="$(arch | sed -E "s/amd64|x86_64/x64/g" | sed s/aarch64/arm64/g)
+        curl -O -L https://github.com/actions/runner/releases/download/v2.278.0/actions-runner-linux-${arch}-2.278.0.tar.gz
+        tar xzf ./actions-runner-linux-${arch}-2.278.0.tar.gz
+        ./config.sh --unattended --url https://github.com/$GITHUB_REPOSITORY --token $gh_token --labels ${label}
+        ./svc.sh install
+        ./svc.sh start
+        HERE
+        )
+        user_d
+
+        aws ec2 run-instances \
+          --image-id ${{ inputs.ami-id }}
+          --instance-type ${{ inputs.instance-type }}
+          --user-data "$()"
+      env:
+        GITHUB_TOKEN: ${{ inputs.github-token }}
