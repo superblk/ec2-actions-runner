@@ -15,13 +15,18 @@ inputs:
   github-token:
     description: GitHub auth token
     required: true
+  runner-name:
+    description: Runner name
+    required: true
   ami-id:
     description: AMI id
     required: true
   instance-type:
     description: EC2 instance type
     required: true
-
+  runner-labels:
+    description: Labels attachd to the runner
+    required: true
 runs:
   using: composite
   steps:
@@ -36,22 +41,21 @@ runs:
       shell: bash
       run: |
         gh_token="$(gh api -X POST -H "Accept: application/vnd.github.v3+json" repos/{owner}/{repo}/actions/runners/registration-token | jq -r .token)"
-        user_data=$(cat <<HERE
+        
+        user_data=$(base64 <<HERE
         #!/bin/bash
-        mkdir actions-runner && cd actions-runner
-        arch="$(arch | sed -E "s/amd64|x86_64/x64/g" | sed s/aarch64/arm64/g)
-        curl -O -L https://github.com/actions/runner/releases/download/v2.278.0/actions-runner-linux-${arch}-2.278.0.tar.gz
-        tar xzf ./actions-runner-linux-${arch}-2.278.0.tar.gz
-        ./config.sh --unattended --url https://github.com/$GITHUB_REPOSITORY --token $gh_token --labels ${label}
-        ./svc.sh install
-        ./svc.sh start
+        actions-runner/config.sh --unattended --name ${{ inputs.runner-name }} --url https://github.com/${{ github.repository }} --token $gh_token --labels ${{ inputs.runner-labels }}
+        actions-runner/svc.sh install
+        actions-runner/svc.sh start
         HERE
         )
-        user_d
 
         aws ec2 run-instances \
-          --image-id ${{ inputs.ami-id }}
-          --instance-type ${{ inputs.instance-type }}
-          --user-data "$()"
+          --image-id "${{ inputs.ami-id }}" \
+          --instance-type "${{ inputs.instance-type }}" \
+          --user-data "$user_data"
+
+        # TODO: wait until running
       env:
         GITHUB_TOKEN: ${{ inputs.github-token }}
+        AWS_DEFAULT_REGION: ${{ inputs.aws-region }}
