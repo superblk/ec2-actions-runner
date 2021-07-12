@@ -1,2 +1,3 @@
-# start-ec2-runner
-Composite action for starting an EC2-based self-hosted runner
+# ec2-linux-runner
+
+Actions for managing an on-demand, EC2-based, self-hosted linux runner
