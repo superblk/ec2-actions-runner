@@ -48,6 +48,7 @@ runs:
           --image-id "${{ inputs.ami-id }}" \
           --instance-type "${{ inputs.instance-type }}" \
           --user-data "$user_data" \
+          --tag-specifications 'ResourceType=instance,Tags=[{Key=Name,Value=GitHub Linux runner}]' \
           | jq -r .Instances[0].InstanceId)
 
         echo "Started instance: $instance_id"
