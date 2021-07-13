@@ -15,18 +15,27 @@ inputs:
   github-token:
     description: GitHub auth token
     required: true
-  runner-name:
-    description: Runner name
-    required: true
   ami-id:
     description: AMI id
     required: true
   instance-type:
     description: EC2 instance type
     required: true
-  runner-labels:
-    description: Labels attachd to the runner
+  runner-name:
+    description: Runner name
     required: true
+  runner-labels:
+    description: Runner labels
+    required: false
+    default: Linux
+  runner-home:
+    description: Runner home dir
+    required: false
+    default: /home/ubuntu/actions-runner
+  runner-user:
+    description: Runner linux user
+    required: false
+    default: ubuntu
 runs:
   using: composite
   steps:
@@ -40,13 +49,14 @@ runs:
     - name: Start runner
       shell: bash
       run: |
-        gh_token="$(gh api -X POST -H "Accept: application/vnd.github.v3+json" repos/{owner}/{repo}/actions/runners/registration-token | jq -r .token)"
+        runner_token="$(gh api -X POST -H "Accept: application/vnd.github.v3+json" repos/{owner}/{repo}/actions/runners/registration-token | jq -r .token)"
         
-        user_data=$(base64 <<HERE
+        user_data=$(base64 -w0 <<HERE
         #!/bin/bash
-        actions-runner/config.sh --unattended --name ${{ inputs.runner-name }} --url https://github.com/${{ github.repository }} --token $gh_token --labels ${{ inputs.runner-labels }}
-        actions-runner/svc.sh install
-        actions-runner/svc.sh start
+        cd "${{ inputs.runner-home }}"
+        sudo -u "${{ inputs.runner-user }}" ./config.sh --unattended --name "${{ inputs.runner-name }}" --url "https://github.com/$GH_REPO" --token "$runner_token" --labels "${{ inputs.runner-labels }}"
+        ./svc.sh install "${{ inputs.runner-user }}"
+        ./svc.sh start
         HERE
         )
 
@@ -55,7 +65,8 @@ runs:
           --instance-type "${{ inputs.instance-type }}" \
           --user-data "$user_data"
 
-        # TODO: wait until running
+        # TODO: wait until running and registered
       env:
-        GITHUB_TOKEN: ${{ inputs.github-token }}
+        GH_REPO: ${{ github.repository }}
+        GH_TOKEN: ${{ inputs.github-token }}
         AWS_DEFAULT_REGION: ${{ inputs.aws-region }}
