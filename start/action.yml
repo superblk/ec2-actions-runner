@@ -15,9 +15,6 @@ inputs:
   instance-type:
     description: EC2 instance type
     required: true
-  runner-name:
-    description: Runner name
-    required: true
   runner-labels:
     description: Runner labels
     required: false
@@ -40,7 +37,8 @@ runs:
         user_data=$(cat <<HERE
         #!/bin/bash
         cd "${{ inputs.runner-home }}"
-        sudo -u "${{ inputs.runner-user }}" ./config.sh --unattended --name "${{ inputs.runner-name }}" --url "https://github.com/${{ github.repository }}" --token "$runner_token" --labels "${{ inputs.runner-labels }}"
+        instance_id="\$(curl -s http://169.254.169.254/latest/meta-data/instance-id)"
+        sudo -u "${{ inputs.runner-user }}" ./config.sh --unattended --name "\$instance_id" --url "https://github.com/${{ github.repository }}" --token "$runner_token" --labels "${{ inputs.runner-labels }}"
         ./svc.sh install "${{ inputs.runner-user }}"
         ./svc.sh start
         HERE
