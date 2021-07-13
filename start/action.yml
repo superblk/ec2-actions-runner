@@ -1,6 +1,6 @@
 ---
 name: Start EC2 linux runner
-description: Starts an EC2-based, self-hosted linux runner
+description: Starts a self-hosted linux runner on EC2
 
 inputs:
   aws-region:
