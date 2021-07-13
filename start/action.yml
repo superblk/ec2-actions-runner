@@ -46,10 +46,12 @@ runs:
         HERE
         )
 
-        aws ec2 run-instances \
+        instance_id=$(aws ec2 run-instances \
           --image-id "${{ inputs.ami-id }}" \
           --instance-type "${{ inputs.instance-type }}" \
-          --user-data "$user_data"
+          --user-data "$user_data" | jq -r .Instances[0].InstanceId)
+
+        echo "Started instance: $instance_id"
 
         # TODO: wait until running and registered
       env:
