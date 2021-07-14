@@ -30,7 +30,7 @@ runs:
         
         echo "Terminating EC2 instance: $instance_id ..."
         
-        aws ec2 terminate-instances --instance-ids "$instance_id"
+        aws ec2 terminate-instances --instance-ids "$instance_id" > /dev/null
         
         echo "Runner successfully stopped"
       env:
