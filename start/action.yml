@@ -1,26 +1,26 @@
 ---
 name: Start EC2 linux runner
-description: Starts a self-hosted linux actions runner on EC2
+description: Starts and registers a self-hosted GitHiub actions repository runner (linux on EC2)
 
 inputs:
   aws-region:
-    description: AWS region
+    description: AWS region, e.g. eu-west-1
     required: true
   github-token:
-    description: GitHub auth token
+    description: GitHub auth token (PAT)
     required: true
   ami-id:
-    description: AMI id
+    description: AMI id, e.g. ami-0318fd6b2f4a2c75e
     required: true
   instance-type:
-    description: EC2 instance type
+    description: EC2 instance type, e.g. t4g.small
     required: true
   runner-labels:
-    description: Runner labels
+    description: Runner labels (comma-separated)
     required: false
     default: Linux
   runner-home:
-    description: Runner home dir
+    description: Runner linux home directory
     required: false
     default: /home/ubuntu/actions-runner
   runner-user:
@@ -29,7 +29,7 @@ inputs:
     default: ubuntu
 outputs:
   runner-id:
-    description: GitHub runner id
+    description: GitHub repository runner id
     value: ${{ steps.main.outputs.runner-id }}
   instance-id:
     description: EC2 instance id
