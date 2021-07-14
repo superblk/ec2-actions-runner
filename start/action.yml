@@ -1,6 +1,6 @@
 ---
 name: Start EC2 linux runner
-description: Starts a self-hosted linux runner on EC2
+description: Starts a self-hosted linux actions runner on EC2
 
 inputs:
   aws-region:
@@ -27,10 +27,18 @@ inputs:
     description: Runner linux user
     required: false
     default: ubuntu
+outputs:
+  runner-id:
+    description: GitHub runner id
+    value: ${{ steps.main.outputs.runner-id }}
+  instance-id:
+    description: EC2 instance id
+    value: ${{ steps.main.outputs.instance-id }}
 runs:
   using: composite
   steps:
-    - shell: bash
+    - id: main
+      shell: bash
       run: |
         runner_token="$(gh api -X POST -H "Accept: application/vnd.github.v3+json" repos/${{ github.repository }}/actions/runners/registration-token | jq -r .token)"
         
@@ -44,16 +52,39 @@ runs:
         HERE
         )
 
+        echo "Starting EC2 instance..."
+
         instance_id=$(aws ec2 run-instances \
           --image-id "${{ inputs.ami-id }}" \
           --instance-type "${{ inputs.instance-type }}" \
           --user-data "$user_data" \
-          --tag-specifications 'ResourceType=instance,Tags=[{Key=Name,Value=GitHub Linux runner}]' \
+          --tag-specifications 'ResourceType=instance,Tags=[{Key=Name,Value=GitHub self-hosted runner}]' \
           | jq -r .Instances[0].InstanceId)
 
-        echo "Started instance: $instance_id"
+        echo "Started EC2 instance: $instance_id"
 
-        # TODO: wait until running and registered
+        echo "Waiting for self-hosted runner to be registered..."
+
+        for i in {1..12}; do
+            sleep 10
+            runner_id=$(gh api -X GET -H "Accept: application/vnd.github.v3+json" \
+              -f per_page=100 repos/${{ github.repository }}/actions/runners | jq -r \
+              --arg INSTANCE_ID "$instance_id" '.runners[] | select(.name == $INSTANCE_ID and .status == "online") | .id')
+            if [ ! -z "$runner_id" ]; then
+                break
+            fi
+        done
+
+        if [ -z "$runner_id" ]; then
+            echo "Runner registration failed (timed out). Terminating instance..."
+            aws ec2 terminate-instances --instance-ids "$instance_id"
+            exit 1
+        else
+            echo "Runner registered with id: $runner_id"
+        fi
+
+        echo "::set-output name=runner-id::$runner_id"
+        echo "::set-output name=instance-id::$instance_id"
       env:
         GH_TOKEN: ${{ inputs.github-token }}
         AWS_DEFAULT_REGION: ${{ inputs.aws-region }}
