@@ -1,6 +1,6 @@
 ---
 name: Start EC2 linux runner
-description: Starts and registers a self-hosted GitHub actions repository runner (linux on EC2)
+description: Starts and registers a self-hosted GitHub actions repository runner (Linux on EC2)
 
 inputs:
   aws-region:
@@ -10,7 +10,7 @@ inputs:
     description: GitHub auth token (PAT with repo scope)
     required: true
   ami-id:
-    description: AMI id, e.g. ami-0318fd6b2f4a2c75e
+    description: AMI id, e.g. ami-12345678901234567
     required: true
   instance-type:
     description: EC2 instance type, e.g. t4g.small
