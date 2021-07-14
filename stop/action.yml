@@ -1,16 +1,16 @@
 ---
 name: Stop EC2 linux runner
-description: Terminates a self-hosted linux actions runner on EC2
+description: Deregisters and terminates a self-hosted GitHub actions repository runner
 
 inputs:
   aws-region:
     description: AWS region
     required: true
   github-token:
-    description: GitHub auth token
+    description: GitHub auth token (PAT with repo scope)
     required: true
   runner-id:
-    description: GitHub runner id
+    description: GitHub repository runner id
     required: true
   instance-id:
     description: EC2 instance id
@@ -24,7 +24,7 @@ runs:
         runner_id='${{ inputs.runner-id }}'
         instance_id='${{ inputs.instance-id }}'
       
-        echo "Deregistering self-hosted runner: $runner_id ..."
+        echo "Deregistering repository runner: $runner_id ..."
         
         gh api -X DELETE -H "Accept: application/vnd.github.v3+json" repos/${{ github.repository }}/actions/runners/$runner_id
         
