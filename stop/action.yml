@@ -1,5 +1,5 @@
 ---
-name: Stop EC2 linux runner
+name: Stop EC2 actions runner
 description: Deregisters and terminates a self-hosted GitHub actions repository runner
 
 inputs:

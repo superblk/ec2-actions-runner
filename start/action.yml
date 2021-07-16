@@ -1,5 +1,5 @@
 ---
-name: Start EC2 linux runner
+name: Start EC2 actions runner
 description: Starts and registers a self-hosted GitHub actions repository runner (Linux on EC2)
 
 inputs:
