@@ -9,6 +9,9 @@ inputs:
   github-token:
     description: GitHub auth token (PAT with repo scope)
     required: true
+  github-repo:
+    description: Github repository, e.g. ghost/example
+    required: true
   runner-id:
     description: GitHub repository runner id
     required: true
@@ -27,7 +30,7 @@ runs:
         echo "Deregistering repository runner: $runner_id ..."
         
         gh api -X DELETE -H "Accept: application/vnd.github.v3+json" \
-          repos/${{ github.repository }}/actions/runners/$runner_id || echo "WARN: Failed to deregister runner"
+          repos/${{ inputs.github-repo }}/actions/runners/$runner_id || echo "WARN: Failed to deregister runner"
         
         echo "Terminating EC2 instance: $instance_id ..."
         
