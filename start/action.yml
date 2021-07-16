@@ -16,15 +16,14 @@ inputs:
     description: EC2 instance type, e.g. t4g.small
     required: true
   runner-labels:
-    description: Runner labels (comma-separated)
+    description: Extra runner labels (comma-separated)
     required: false
-    default: Linux
   runner-home:
-    description: Runner linux home directory
+    description: Runner OS home directory
     required: false
     default: /home/ubuntu/actions-runner
   runner-user:
-    description: Runner linux user
+    description: Runner OS user
     required: false
     default: ubuntu
 outputs:
