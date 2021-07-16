@@ -75,7 +75,7 @@ runs:
         done
 
         if [ -z "$runner_id" ]; then
-            echo "Runner registration failed (timed out). Terminating instance..."
+            echo "Runner registration failed (timed out). Terminating instance ..."
             aws ec2 terminate-instances --instance-ids "$instance_id"
             exit 1
         else
