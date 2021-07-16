@@ -51,7 +51,7 @@ runs:
         HERE
         )
 
-        echo "Starting EC2 instance..."
+        echo "Starting EC2 instance ..."
 
         instance_id=$(aws ec2 run-instances \
           --image-id "${{ inputs.ami-id }}" \
@@ -62,7 +62,7 @@ runs:
 
         echo "Started EC2 instance: $instance_id"
 
-        echo "Waiting for repository runner to be registered..."
+        echo "Waiting for repository runner to be registered ..."
 
         for i in {1..12}; do
             sleep 10
