@@ -1,4 +1,4 @@
-# ec2-linux-runner
+# ec2-actions-runner
 
 ⚠️ This is a new project and is very experimental
 
