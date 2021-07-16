@@ -4,10 +4,13 @@ description: Starts and registers a self-hosted GitHub actions repository runner
 
 inputs:
   aws-region:
-    description: AWS region, e.g. eu-west-1
+    description: AWS region, e.g. eu-north-1
     required: true
   github-token:
-    description: GitHub auth token (PAT with repo scope)
+    description: GitHub token (PAT with repo scope)
+    required: true
+  github-repo:
+    description: Github repository, e.g. ghost/example
     required: true
   ami-id:
     description: AMI id, e.g. ami-12345678901234567
@@ -39,13 +42,13 @@ runs:
     - id: main
       shell: bash
       run: |
-        runner_token="$(gh api -X POST -H "Accept: application/vnd.github.v3+json" repos/${{ github.repository }}/actions/runners/registration-token | jq -r .token)"
+        runner_token="$(gh api -X POST -H "Accept: application/vnd.github.v3+json" repos/${{ inputs.github-repo }}/actions/runners/registration-token | jq -r .token)"
         
         user_data=$(cat <<HERE
         #!/bin/bash
         cd "${{ inputs.runner-home }}"
         instance_id="\$(curl -s http://169.254.169.254/latest/meta-data/instance-id)"
-        sudo -u "${{ inputs.runner-user }}" ./config.sh --unattended --name "\$instance_id" --url "https://github.com/${{ github.repository }}" --token "$runner_token" --labels "${{ inputs.runner-labels }}"
+        sudo -u "${{ inputs.runner-user }}" ./config.sh --unattended --name "\$instance_id" --url "https://github.com/${{ inputs.github-repo }}" --token "$runner_token" --labels "${{ inputs.runner-labels }}"
         ./svc.sh install "${{ inputs.runner-user }}"
         ./svc.sh start
         HERE
@@ -67,7 +70,7 @@ runs:
         for i in {1..12}; do
             sleep 10
             runner_id=$(gh api -X GET -H "Accept: application/vnd.github.v3+json" \
-              -f per_page=100 repos/${{ github.repository }}/actions/runners | jq -r \
+              -f per_page=100 repos/${{ inputs.github-repo }}/actions/runners | jq -r \
               --arg INSTANCE_ID "$instance_id" '.runners[] | select(.name == $INSTANCE_ID and .status == "online") | .id')
             if [ ! -z "$runner_id" ]; then
                 break
