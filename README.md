@@ -2,7 +2,7 @@
 
 ⚠️ This is a new project and is very experimental
 
-Composite actions for starting and stopping an on-demand, self-hosted GitHub actions _repository_ runner (Linux on EC2).
+Composite actions for managing an on-demand, self-hosted GitHub actions _repository_ runner (Linux on EC2).
 
 ## Requirements
 
