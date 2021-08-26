@@ -61,7 +61,7 @@ jobs:
     runs-on: ubuntu-18.04
     steps:
       - name: Stop runner
-        uses: superblk/ec2-actions-runner/stop@compose-moar
+        uses: superblk/ec2-actions-runner/stop@v0.3.0
         with:
           aws-region: eu-north-1
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
