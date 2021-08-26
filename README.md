@@ -8,9 +8,9 @@ Composite actions for managing an on-demand, self-hosted GitHub actions _reposit
 
 - AWS account
 - Default VPC + subnet
+- AWS credentials/role with EC2 permissions
 - Linux AMI (amd64 or arm64), with
-  - Non-root user to run the runner as
+  - Non-root user to run actions-runner as
   - [Runner](https://github.com/actions/runner) software and [dependencies](https://github.com/actions/runner/blob/main/docs/start/envlinux.md)
-- AWS authentication with permission to run and terminate EC2 instances
-  - You can use [aws-actions/configure-aws-credentials](https://github.com/aws-actions/configure-aws-credentials) to authenticate prior to using this action
+  - See e.g. <https://github.com/superblk/ec2-actions-runner-ami-linux-arm64>
 - GitHub personal access token (PAT) with `repo` scope

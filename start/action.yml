@@ -4,8 +4,17 @@ description: Starts and registers a self-hosted GitHub actions repository runner
 
 inputs:
   aws-region:
-    description: AWS region, e.g. eu-north-1
+    description: AWS region
     required: true
+  aws-access-key-id:
+    description: AWS access key ID
+    required: true
+  aws-secret-access-key:
+    description: AWS secret access key
+    required: true
+  aws-role-to-assume:
+    description: AWS IAM role to assume
+    required: false
   github-token:
     description: GitHub token (PAT with repo scope)
     required: true
@@ -29,6 +38,7 @@ inputs:
     description: Runner OS user
     required: false
     default: ubuntu
+
 outputs:
   runner-id:
     description: GitHub repository runner id
@@ -36,20 +46,32 @@ outputs:
   instance-id:
     description: EC2 instance id
     value: ${{ steps.main.outputs.instance-id }}
+
 runs:
   using: composite
   steps:
+
+    - id: auth
+      uses: aws-actions/configure-aws-credentials@v1
+      with:
+        aws-region: ${{ inputs.aws-region }}
+        aws-access-key-id: ${{ inputs.aws-access-key-id }}
+        aws-secret-access-key: ${{ inputs.aws-secret-access-key }}
+        role-to-assume: ${{ inputs.aws-role-to-assume }}
+        role-session-name: ec2-actions-runner-start
+        role-duration-seconds: 900
+
     - id: main
       shell: bash
       run: |
-        runner_token="$(gh api -X POST -H "Accept: application/vnd.github.v3+json" repos/${{ inputs.github-repo }}/actions/runners/registration-token | jq -r .token)"
+        runner_token="$(gh api -X POST -H 'Accept: application/vnd.github.v3+json' "repos/$GITHUB_REPO/actions/runners/registration-token" | jq -r .token)"
         
         user_data=$(cat <<HERE
         #!/bin/bash
-        cd "${{ inputs.runner-home }}"
+        cd "$RUNNER_HOME"
         instance_id="\$(curl -s http://169.254.169.254/latest/meta-data/instance-id)"
-        sudo -u "${{ inputs.runner-user }}" ./config.sh --unattended --name "\$instance_id" --url "https://github.com/${{ inputs.github-repo }}" --token "$runner_token" --labels "${{ inputs.runner-labels }}"
-        ./svc.sh install "${{ inputs.runner-user }}"
+        sudo -u "$RUNNER_USER" ./config.sh --unattended --name "\$instance_id" --url "https://github.com/$GITHUB_REPO" --token "$runner_token" --labels "$RUNNER_LABELS"
+        ./svc.sh install "$RUNNER_USER"
         ./svc.sh start
         HERE
         )
@@ -57,8 +79,8 @@ runs:
         echo "Starting EC2 instance ..."
 
         instance_id=$(aws ec2 run-instances \
-          --image-id "${{ inputs.ami-id }}" \
-          --instance-type "${{ inputs.instance-type }}" \
+          --image-id "$AMI_ID" \
+          --instance-type "$INSTANCE_TYPE" \
           --user-data "$user_data" \
           --tag-specifications 'ResourceType=instance,Tags=[{Key=Name,Value=GitHub self-hosted runner}]' \
           | jq -r .Instances[0].InstanceId)
@@ -69,9 +91,9 @@ runs:
 
         for i in {1..12}; do
             sleep 10
-            runner_id=$(gh api -X GET -H "Accept: application/vnd.github.v3+json" \
-              -f per_page=100 repos/${{ inputs.github-repo }}/actions/runners | jq -r \
-              --arg INSTANCE_ID "$instance_id" '.runners[] | select(.name == $INSTANCE_ID and .status == "online") | .id')
+            runner_id=$(gh api -X GET -H 'Accept: application/vnd.github.v3+json' \
+              -f per_page=100 "repos/$GITHUB_REPO/actions/runners" | jq -r --arg INSTANCE_ID "$instance_id" \
+              '.runners[] | select(.name == $INSTANCE_ID and .status == "online") | .id')
             if [ ! -z "$runner_id" ]; then
                 break
             fi
@@ -90,3 +112,9 @@ runs:
       env:
         GH_TOKEN: ${{ inputs.github-token }}
         AWS_DEFAULT_REGION: ${{ inputs.aws-region }}
+        GITHUB_REPO: ${{ inputs.github-repo }}
+        RUNNER_HOME: ${{ inputs.runner-home }}
+        RUNNER_USER: ${{ inputs.runner-user }}
+        RUNNER_LABELS: ${{ inputs.runner-labels }}
+        AMI_ID: ${{ inputs.ami-id }}
+        INSTANCE_TYPE: ${{ inputs.instance-type }}
