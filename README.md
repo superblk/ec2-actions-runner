@@ -4,6 +4,8 @@
 
 Composite actions for managing an on-demand, self-hosted GitHub actions _repository_ runner (Linux on EC2).
 
+Inspired by <https://github.com/machulav/ec2-github-runner>
+
 ## Requirements
 
 - AWS account
