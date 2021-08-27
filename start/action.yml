@@ -15,17 +15,14 @@ inputs:
   aws-role-to-assume:
     description: AWS IAM role to assume
     required: false
+  aws-launch-template:
+    description: AWS EC2 launch template spec
+    required: true
   github-token:
     description: GitHub token (PAT with repo scope)
     required: true
   github-repo:
     description: Github repository, e.g. ghost/example
-    required: true
-  ami-id:
-    description: AMI id, e.g. ami-12345678901234567
-    required: true
-  instance-type:
-    description: EC2 instance type, e.g. t4g.small
     required: true
   runner-labels:
     description: Extra runner labels (comma-separated)
@@ -78,12 +75,7 @@ runs:
 
         echo "Starting EC2 instance ..."
 
-        instance_id=$(aws ec2 run-instances \
-          --image-id "$AMI_ID" \
-          --instance-type "$INSTANCE_TYPE" \
-          --user-data "$user_data" \
-          --tag-specifications 'ResourceType=instance,Tags=[{Key=Name,Value=GitHub self-hosted runner}]' \
-          | jq -r .Instances[0].InstanceId)
+        instance_id="$(aws ec2 run-instances --launch-template "$LAUNCH_TEMPLATE" --user-data "$user_data" | jq -r .Instances[0].InstanceId)"
 
         echo "Started EC2 instance: $instance_id"
 
@@ -112,9 +104,8 @@ runs:
       env:
         GH_TOKEN: ${{ inputs.github-token }}
         AWS_DEFAULT_REGION: ${{ inputs.aws-region }}
+        LAUNCH_TEMPLATE: ${{ inputs.aws-launch-template }}
         GITHUB_REPO: ${{ inputs.github-repo }}
         RUNNER_HOME: ${{ inputs.runner-home }}
         RUNNER_USER: ${{ inputs.runner-user }}
         RUNNER_LABELS: ${{ inputs.runner-labels }}
-        AMI_ID: ${{ inputs.ami-id }}
-        INSTANCE_TYPE: ${{ inputs.instance-type }}
