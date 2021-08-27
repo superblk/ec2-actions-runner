@@ -9,7 +9,7 @@ Inspired by <https://github.com/machulav/ec2-github-runner>
 ## Requirements
 
 - AWS account
-- Default VPC + subnet
+- EC2 launch template
 - AWS credentials with EC2 permissions
 - Linux runner AMI (amd64 or arm64), with
   - [Runner](https://github.com/actions/runner) software and [dependencies](https://github.com/actions/runner/blob/main/docs/start/envlinux.md)
@@ -28,15 +28,14 @@ jobs:
     steps:
       - id: runner
         name: Start runner
-        uses: superblk/ec2-actions-runner/start@v0.3.0
+        uses: superblk/ec2-actions-runner/start@v0.4.0
         with:
           aws-region: eu-north-1
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-launch-template: LaunchTemplateName=my-special-runner
           github-token: ${{ secrets.GH_PAT }}
           github-repo: ${{ github.repository }}
-          ami-id: ami-12345678901234567
-          instance-type: t4g.small
           runner-labels: ubuntu-18.04-arm64
     outputs:
       runner-id: ${{ steps.runner.outputs.runner-id }}
@@ -61,7 +60,7 @@ jobs:
     runs-on: ubuntu-18.04
     steps:
       - name: Stop runner
-        uses: superblk/ec2-actions-runner/stop@v0.3.0
+        uses: superblk/ec2-actions-runner/stop@v0.4.0
         with:
           aws-region: eu-north-1
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
