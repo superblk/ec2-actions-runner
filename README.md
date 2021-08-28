@@ -8,13 +8,14 @@ Inspired by <https://github.com/machulav/ec2-github-runner>
 
 ## Requirements
 
-- AWS account + VPC network
+- AWS account
+- VPC subnet with Internet access
 - AWS credentials with EC2 permissions
 - Linux runner AMI (amd64 or arm64), with
   - [Runner](https://github.com/actions/runner) software and [dependencies](https://github.com/actions/runner/blob/main/docs/start/envlinux.md)
   - Non-root user to run actions-runner with
   - See e.g. <https://github.com/superblk/ec2-actions-runner-ami-linux-arm64>
-- EC2 launch template (AMI, instance type, VPC, security group, spot etc)
+- EC2 launch template (AMI, instance type, VPC, security group, spot options etc)
 - GitHub personal access token (PAT) with `repo` scope
 
 ## Example workflow
