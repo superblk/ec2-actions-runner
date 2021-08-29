@@ -9,8 +9,8 @@ Inspired by <https://github.com/machulav/ec2-github-runner>
 ## Requirements
 
 - AWS account
-- VPC subnet with Internet access
 - AWS credentials with EC2 permissions
+- VPC subnet with Internet access (either public IP or via NAT gateway)
 - Linux runner AMI (amd64 or arm64), with
   - [Runner](https://github.com/actions/runner) software and [dependencies](https://github.com/actions/runner/blob/main/docs/start/envlinux.md)
   - Non-root user to run actions-runner with
