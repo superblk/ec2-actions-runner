@@ -16,6 +16,7 @@ Inspired by <https://github.com/machulav/ec2-github-runner>
   - Non-root user to run actions-runner with
   - See e.g. <https://github.com/superblk/ec2-actions-runner-ami-linux-arm64>
 - EC2 launch template (AMI, instance type, VPC, security group, spot options etc)
+  - See example [Cloudformation template](https://gist.github.com/jpalomaki/003c4d173a856cf64c6d35f8869a2de8) that sets up a launch template
 - GitHub personal access token (PAT) with `repo` scope
 
 ## Example workflow
