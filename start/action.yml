@@ -23,7 +23,8 @@ inputs:
     required: true
   github-repo:
     description: Github repository, e.g. ghost/example
-    required: true
+    default: '${{ github.repository }}'
+    required: false
   runner-labels:
     description: Extra runner labels (comma-separated)
     required: false
