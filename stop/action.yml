@@ -20,7 +20,8 @@ inputs:
     required: true
   github-repo:
     description: Github repository, e.g. ghost/example
-    required: true
+    default: ${{ github.repository }}
+    required: false
   runner-id:
     description: GitHub repository runner id
     required: true
