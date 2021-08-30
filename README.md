@@ -30,14 +30,13 @@ jobs:
     steps:
       - id: runner
         name: Start runner
-        uses: superblk/ec2-actions-runner/start@v0.4.0
+        uses: superblk/ec2-actions-runner/start@v0.5.0
         with:
           aws-region: eu-north-1
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-launch-template: LaunchTemplateName=my-special-runner
           github-token: ${{ secrets.GH_PAT }}
-          github-repo: ${{ github.repository }}
           runner-labels: ubuntu-18.04-arm64
     outputs:
       runner-id: ${{ steps.runner.outputs.runner-id }}
@@ -62,13 +61,12 @@ jobs:
     runs-on: ubuntu-18.04
     steps:
       - name: Stop runner
-        uses: superblk/ec2-actions-runner/stop@v0.4.0
+        uses: superblk/ec2-actions-runner/stop@v0.5.0
         with:
           aws-region: eu-north-1
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           github-token: ${{ secrets.GH_PAT }}
-          github-repo: ${{ github.repository }}
           runner-id: ${{ needs.start-runner.outputs.runner-id }}
           instance-id: ${{ needs.start-runner.outputs.instance-id }}
 ```
