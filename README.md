@@ -26,7 +26,7 @@ Inspired by <https://github.com/machulav/ec2-github-runner>
 ```yaml
 jobs:
   start-runner:
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-20.04
     steps:
       - id: runner
         name: Start runner
@@ -58,7 +58,7 @@ jobs:
   stop-runner:
     needs: [start-runner, complex-build]
     if: always() && needs.start-runner.result == 'success'
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-20.04
     steps:
       - name: Stop runner
         uses: superblk/ec2-actions-runner/stop@v0.5.0
