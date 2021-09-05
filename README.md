@@ -30,7 +30,7 @@ jobs:
     steps:
       - id: runner
         name: Start runner
-        uses: superblk/ec2-actions-runner/start@v0.5.0
+        uses: superblk/ec2-actions-runner/start@v0.6.0
         with:
           aws-region: eu-north-1
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
@@ -61,7 +61,7 @@ jobs:
     runs-on: ubuntu-20.04
     steps:
       - name: Stop runner
-        uses: superblk/ec2-actions-runner/stop@v0.5.0
+        uses: superblk/ec2-actions-runner/stop@v0.6.0
         with:
           aws-region: eu-north-1
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
