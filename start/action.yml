@@ -42,7 +42,7 @@ outputs:
     description: GitHub repository runner id
     value: ${{ steps.main.outputs.runner-id }}
   instance-id:
-    description: EC2 instance id
+    description: AWS EC2 instance id
     value: ${{ steps.main.outputs.instance-id }}
 
 runs:
