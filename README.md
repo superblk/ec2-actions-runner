@@ -56,8 +56,8 @@ jobs:
       - run: echo '${{ matrix.message }}'
 
   stop-runner:
+    if: always()
     needs: [start-runner, complex-build]
-    if: always() && needs.start-runner.result == 'success'
     runs-on: ubuntu-20.04
     steps:
       - name: Stop runner
