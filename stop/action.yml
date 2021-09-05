@@ -46,7 +46,7 @@ runs:
     - id: main
       shell: bash
       run: |
-        # Offline runners are automatically deleted after 30 days, so we only emit a warning for runner deregistration failure
+        # Offline runners are automatically deleted after 30 days, so we emit a warning for runner deregistration failure
         if [ -z "$RUNNER_ID" ]; then
             echo "WARN: Unable to deregister GitHub repository runner (runner ID not available)
         else
@@ -56,7 +56,7 @@ runs:
               
         fi
         
-        # Failure to terminate the EC2 instance will incur unnecessary costs, so we fail loudly to ensure the user notices it
+        # Failure to terminate the EC2 instance will incur unnecessary costs, so we fail the job to ensure the user notices
         if [ -z "$INSTANCE_ID" ]; then
             echo "ERROR: Unable to terminate EC2 instance (instance ID not available)
             exit 1
