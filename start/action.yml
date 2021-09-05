@@ -78,6 +78,8 @@ runs:
 
         instance_id="$(aws ec2 run-instances --launch-template "$LAUNCH_TEMPLATE" --user-data "$user_data" | jq -r .Instances[0].InstanceId)"
 
+        echo "::set-output name=instance-id::$instance_id"
+
         echo "Started EC2 instance: $instance_id"
 
         echo "Waiting for repository runner to be registered ..."
@@ -97,11 +99,9 @@ runs:
             aws ec2 terminate-instances --instance-ids "$instance_id"
             exit 1
         else
+            echo "::set-output name=runner-id::$runner_id"
             echo "Repository runner registered with id: $runner_id"
         fi
-
-        echo "::set-output name=runner-id::$runner_id"
-        echo "::set-output name=instance-id::$instance_id"
       env:
         GH_TOKEN: ${{ inputs.github-token }}
         AWS_DEFAULT_REGION: ${{ inputs.aws-region }}
