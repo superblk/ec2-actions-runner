@@ -53,6 +53,7 @@ runs:
             echo "Deregistering GitHub repository runner: $RUNNER_ID ..."
             gh api -X DELETE -H 'Accept: application/vnd.github.v3+json' \
               "repos/$GITHUB_REPO/actions/runners/$RUNNER_ID" || echo "WARN: Failed to deregister GitHub repository runner (GitHub API call failed)"
+              
         fi
         
         # Failure to terminate the EC2 instance will incur unnecessary costs, so we fail loudly to ensure the user notices it
@@ -62,6 +63,7 @@ runs:
         else
             echo "Terminating EC2 instance: $INSTANCE_ID ..."
             aws ec2 terminate-instances --instance-ids "$INSTANCE_ID" > /dev/null
+            echo "Repository runner stopped"
         fi
       env:
         GH_TOKEN: ${{ inputs.github-token }}
