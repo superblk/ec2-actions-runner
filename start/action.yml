@@ -100,7 +100,7 @@ runs:
             exit 1
         else
             echo "::set-output name=runner-id::$runner_id"
-            echo "Repository runner registered with id: $runner_id"
+            echo "Repository runner started (ID: $runner_id)"
         fi
       env:
         GH_TOKEN: ${{ inputs.github-token }}
