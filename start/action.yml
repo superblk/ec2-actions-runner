@@ -36,6 +36,10 @@ inputs:
     description: Runner OS user
     required: false
     default: ubuntu
+  shutdown-after:
+    description: Automatically shutdown instance after this period of time
+    required: false
+    default: '72 hours'
 
 outputs:
   runner-id:
