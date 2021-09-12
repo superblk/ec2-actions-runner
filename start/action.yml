@@ -36,10 +36,9 @@ inputs:
     description: Runner OS user
     required: false
     default: ubuntu
-  shutdown-after:
-    description: Automatically shutdown instance after this period of time
+  shutdown-at:
+    description: Automatically shutdown instance at the specified time?. E.g. 'now + 72 hours'. See https://linux.die.net/man/1/at for the time format
     required: false
-    default: '72 hours'
 
 outputs:
   runner-id:
@@ -75,6 +74,7 @@ runs:
         sudo -u "$RUNNER_USER" ./config.sh --unattended --name "\$instance_id" --url "https://github.com/$GITHUB_REPO" --token "$runner_token" --labels "$RUNNER_LABELS"
         ./svc.sh install "$RUNNER_USER"
         ./svc.sh start
+        test -z "$SHUTDOWN_AT" || echo 'shutdown -P now' | at -M "$HUTDOWN_AT"
         HERE
         )
 
@@ -114,3 +114,4 @@ runs:
         RUNNER_HOME: ${{ inputs.runner-home }}
         RUNNER_USER: ${{ inputs.runner-user }}
         RUNNER_LABELS: ${{ inputs.runner-labels }}
+        SHUTDOWN_AT: ${{ inputs.shutdown-at }}
