@@ -4,16 +4,16 @@ description: Starts and registers a self-hosted GitHub actions repository runner
 
 inputs:
   aws-region:
-    description: AWS region
+    description: AWS region, e.g. eu-west-1
     required: true
   aws-access-key-id:
-    description: AWS access key ID
+    description: AWS access key ID (sensitive, pass via GitHub secret)
     required: true
   aws-secret-access-key:
-    description: AWS secret access key
+    description: AWS secret access key (sensitive, pass via GitHub secret)
     required: true
   aws-role-to-assume:
-    description: AWS IAM role (ARN) to assume
+    description: AWS IAM role (ARN) to assume (optional)
     required: false
   aws-launch-template:
     description: AWS EC2 launch template (AWS CLI format, e.g. LaunchTemplateId=lt-0abcd290751193123)
@@ -22,22 +22,22 @@ inputs:
     description: GitHub token (PAT with repo scope)
     required: true
   github-repo:
-    description: Github repository, e.g. ghost/example
+    description: Github repository, e.g. ghost/example. Defaults to current repository
     default: ${{ github.repository }}
     required: false
   runner-labels:
     description: Extra runner labels (comma-separated)
     required: false
   runner-home:
-    description: Runner OS home directory
+    description: Directory that contains actions-runner software and scripts
     required: false
     default: /home/ubuntu/actions-runner
   runner-user:
-    description: Runner OS user
+    description: User to run the actions-runner service as
     required: false
     default: ubuntu
   shutdown-at:
-    description: Automatically shutdown instance at the specified time?. E.g. 'now + 72 hours'. See https://linux.die.net/man/1/at for the time format
+    description: Automatically shutdown instance at the specified time?. E.g. 'now + 72 hours'. Requires https://linux.die.net/man/1/at
     required: false
 
 outputs:
