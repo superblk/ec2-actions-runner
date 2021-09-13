@@ -4,29 +4,29 @@ description: Deregisters and terminates a self-hosted GitHub actions repository 
 
 inputs:
   aws-region:
-    description: AWS region
+    description: AWS region, e.g. eu-west-1
     required: true
   aws-access-key-id:
-    description: AWS access key ID
+    description: AWS access key ID (pass via GitHub secret)
     required: true
   aws-secret-access-key:
-    description: AWS secret access key
+    description: AWS secret access key (pass via GitHub secret)
     required: true
   aws-role-to-assume:
-    description: AWS IAM role to assume
+    description: AWS IAM role to assume (optional)
     required: false
   github-token:
-    description: GitHub auth token (PAT with repo scope)
+    description: GitHub auth token (PAT with repo scope, pass via Github secret)
     required: true
   github-repo:
-    description: Github repository, e.g. ghost/example
+    description: Github repository, e.g. ghost/example. Defaults to current repository
     default: ${{ github.repository }}
     required: false
   runner-id:
-    description: GitHub repository runner id
+    description: GitHub repository runner id, e.g. 53
     required: true
   instance-id:
-    description: EC2 instance id
+    description: EC2 instance id, e.g. i-0ab3a789090bd84c7
     required: true
 
 runs:
