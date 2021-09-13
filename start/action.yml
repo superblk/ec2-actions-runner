@@ -36,7 +36,7 @@ inputs:
     description: User to run the actions-runner service as
     required: false
     default: ubuntu
-  shutdown-at:
+  auto-shutdown-at:
     description: Automatically shutdown instance at the specified time?. E.g. 'now + 72 hours'. Requires https://linux.die.net/man/1/at
     required: false
 
@@ -114,4 +114,4 @@ runs:
         RUNNER_HOME: ${{ inputs.runner-home }}
         RUNNER_USER: ${{ inputs.runner-user }}
         RUNNER_LABELS: ${{ inputs.runner-labels }}
-        SHUTDOWN_AT: ${{ inputs.shutdown-at }}
+        SHUTDOWN_AT: ${{ inputs.auto-shutdown-at }}
