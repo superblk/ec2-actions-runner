@@ -7,10 +7,10 @@ inputs:
     description: AWS region, e.g. eu-west-1
     required: true
   aws-access-key-id:
-    description: AWS access key ID (sensitive, pass via GitHub secret)
+    description: AWS access key ID (pass via GitHub secret)
     required: true
   aws-secret-access-key:
-    description: AWS secret access key (sensitive, pass via GitHub secret)
+    description: AWS secret access key (pass via GitHub secret)
     required: true
   aws-role-to-assume:
     description: AWS IAM role (ARN) to assume (optional)
@@ -19,7 +19,7 @@ inputs:
     description: AWS EC2 launch template (AWS CLI format, e.g. LaunchTemplateId=lt-0abcd290751193123)
     required: true
   github-token:
-    description: GitHub token (PAT with repo scope)
+    description: GitHub token (PAT with repo scope, pass via Github secret)
     required: true
   github-repo:
     description: Github repository, e.g. ghost/example. Defaults to current repository
