@@ -22,7 +22,7 @@ Inspired by <https://github.com/machulav/ec2-github-runner>
 
 ## Example workflow
 
-See [start/action.yml](start/action.yml) and [start/action.yml](stop/action.yml) for all available input parameters.
+See [start/action.yml](start/action.yml) and [stop/action.yml](stop/action.yml) for all available input parameters.
 
 :warning: do not copy this example verbatim, but adjust AWS region, launch template etc to match your config
 
