@@ -24,7 +24,7 @@ Inspired by <https://github.com/machulav/ec2-github-runner>
 
 See [start/action.yml](start/action.yml) and [stop/action.yml](stop/action.yml) for all available input parameters.
 
-:warning: do not copy this example verbatim, but adjust AWS region, launch template etc to match your config
+:warning: do not copy this example verbatim, but adjust action version, AWS region, launch template etc to match your config
 
 ```yaml
 jobs:
@@ -33,7 +33,7 @@ jobs:
     steps:
       - id: runner
         name: Start runner
-        uses: superblk/ec2-actions-runner/start@v0.7.0
+        uses: superblk/ec2-actions-runner/start@<release>
         with:
           aws-region: eu-north-1
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
@@ -62,7 +62,7 @@ jobs:
     runs-on: ubuntu-20.04
     steps:
       - name: Stop runner
-        uses: superblk/ec2-actions-runner/stop@v0.7.0
+        uses: superblk/ec2-actions-runner/stop@<release>
         with:
           aws-region: eu-north-1
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
