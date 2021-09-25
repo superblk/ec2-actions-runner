@@ -13,7 +13,7 @@ Inspired by <https://github.com/machulav/ec2-github-runner>
 - VPC subnet with Internet access (either assigning public IP or via NAT gateway)
 - Linux runner AMI (amd64 or arm64), with the following things pre-configured:
   - Non-root user to run actions-runner service as
-  - [Actions-runner](https://github.com/actions/runner) v2.283.1+ and its [dependencies](https://github.com/actions/runner/blob/main/docs/start/envlinux.md)
+  - [Actions-runner](https://github.com/actions/runner) v2.283.1+ and required [dependencies](https://github.com/actions/runner/blob/main/docs/start/envlinux.md)
   - `git`, `docker`, `curl` and optionally `at` (if using the auto-shutdown feature)
   - See e.g. <https://github.com/superblk/ec2-actions-runner-ami-linux-arm64>
 - EC2 launch template (AMI, instance type, VPC, security group, spot options etc)
