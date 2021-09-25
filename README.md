@@ -42,7 +42,6 @@ jobs:
           github-token: ${{ secrets.GH_PAT }}
           runner-labels: ubuntu-18.04-arm64
     outputs:
-      runner-id: ${{ steps.runner.outputs.runner-id }}
       instance-id: ${{ steps.runner.outputs.instance-id }}
 
   complex-build:
@@ -68,6 +67,5 @@ jobs:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           github-token: ${{ secrets.GH_PAT }}
-          runner-id: ${{ needs.start-runner.outputs.runner-id }}
           instance-id: ${{ needs.start-runner.outputs.instance-id }}
 ```
