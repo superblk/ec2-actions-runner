@@ -24,9 +24,12 @@ Inspired by <https://github.com/machulav/ec2-github-runner>
 
 See [start/action.yml](start/action.yml) and [stop/action.yml](stop/action.yml) for all available input parameters.
 
-:warning: do not copy this example verbatim, but adjust action version, AWS region, launch template etc to match your config
+:warning: do not copy this example verbatim, but adjust action version, AWS region, launch template, runner label etc to match your config
 
 ```yaml
+env:
+  RUNNER_LABEL: ubuntu-18.04-arm64-${{ github.run_id }}
+
 jobs:
   start-runner:
     runs-on: ubuntu-20.04
@@ -39,25 +42,20 @@ jobs:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-launch-template: LaunchTemplateName=my-arm64-runner
-          runner-labels: ubuntu-18.04-arm64-${{ github.run_id }}
+          runner-labels: ${{ env.RUNNER_LABEL }}
           github-token: ${{ secrets.GH_PAT }}
     outputs:
       instance-id: ${{ steps.runner.outputs.instance-id }}
 
-  complex-build:
+  main:
     needs: start-runner
-    runs-on: ${{ matrix.runner }}
-    strategy:
-      matrix:
-        include:
-          - runner: ubuntu-18.04
-          - runner: ubuntu-18.04-arm64-${{ github.run_id }}
+    runs-on: ${{ env.RUNNER_LABEL }}
     steps:
       - run: uname -a
 
   stop-runner:
     if: always()
-    needs: [start-runner, complex-build]
+    needs: [start-runner, main]
     runs-on: ubuntu-20.04
     steps:
       - name: Stop runner
