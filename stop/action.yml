@@ -16,8 +16,8 @@ inputs:
     description: AWS IAM role to assume (optional)
     required: false
   github-token:
-    description: GitHub auth token (PAT with repo scope, pass via GitHub secret)
-    required: true
+    description: GitHub auth token (PAT with repo scope, pass via GitHub secret). Optional if using ephemeral runners
+    required: false
   github-repo:
     description: Github repository, e.g. ghost/example. Defaults to current repository
     default: ${{ github.repository }}
