@@ -24,7 +24,7 @@ Inspired by <https://github.com/machulav/ec2-github-runner>
 
 See [start/action.yml](start/action.yml) and [stop/action.yml](stop/action.yml) for all available input parameters.
 
-:warning: do not copy this example verbatim, but adjust action version, AWS region, launch template, runner label etc to match your config
+💡 do not simply copy this example verbatim, but adjust action version, AWS region, launch template etc to match your config
 
 ```yaml
 jobs:
