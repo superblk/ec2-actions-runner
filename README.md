@@ -27,9 +27,6 @@ See [start/action.yml](start/action.yml) and [stop/action.yml](stop/action.yml) 
 :warning: do not copy this example verbatim, but adjust action version, AWS region, launch template, runner label etc to match your config
 
 ```yaml
-env:
-  RUNNER_LABEL: ubuntu-18.04-arm64-${{ github.run_id }}
-
 jobs:
   start-runner:
     runs-on: ubuntu-20.04
@@ -41,15 +38,14 @@ jobs:
           aws-region: eu-north-1
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-launch-template: LaunchTemplateName=my-arm64-runner
-          runner-labels: ${{ env.RUNNER_LABEL }}
+          aws-launch-template: LaunchTemplateName=my-special-runner
           github-token: ${{ secrets.GH_PAT }}
     outputs:
       instance-id: ${{ steps.runner.outputs.instance-id }}
 
   main:
     needs: start-runner
-    runs-on: ${{ env.RUNNER_LABEL }}
+    runs-on: ${{ needs.start-runner.outputs.instance-id }}
     steps:
       - run: uname -a
 
