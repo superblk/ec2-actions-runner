@@ -39,8 +39,8 @@ jobs:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-launch-template: LaunchTemplateName=my-arm64-runner
+          runner-labels: ubuntu-18.04-arm64-${{ github.run_id }}
           github-token: ${{ secrets.GH_PAT }}
-          runner-labels: ubuntu-18.04-arm64
     outputs:
       instance-id: ${{ steps.runner.outputs.instance-id }}
 
@@ -51,7 +51,7 @@ jobs:
       matrix:
         include:
           - runner: ubuntu-18.04
-          - runner: ubuntu-18.04-arm64
+          - runner: ubuntu-18.04-arm64-${{ github.run_id }}
     steps:
       - run: uname -a
 
@@ -66,6 +66,5 @@ jobs:
           aws-region: eu-north-1
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          github-token: ${{ secrets.GH_PAT }}
           instance-id: ${{ needs.start-runner.outputs.instance-id }}
 ```
