@@ -19,11 +19,11 @@ inputs:
     description: GitHub auth token (PAT with repo scope, pass via GitHub secret). Optional if using ephemeral runners
     required: false
   github-repo:
-    description: Github repository, e.g. ghost/example. Defaults to current repository
+    description: GitHub repository, e.g. ghost/example. Optional, defaults to the repository where the workflow is run
     default: ${{ github.repository }}
     required: false
   runner-id:
-    description: GitHub repository runner id, e.g. 53. Optional if using ephemeral runners
+    description: GitHub repository runner ID, e.g. 53. Optional if using ephemeral runners
     required: false
   instance-id:
     description: EC2 instance id, e.g. i-0ab3a789090bd84c7
