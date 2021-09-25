@@ -26,7 +26,7 @@ inputs:
     default: ${{ github.repository }}
     required: false
   runner-labels:
-    description: Extra runner labels (comma-separated)
+    description: Extra runner labels (comma-separated). Can be referenced in job 'runs-on'
     required: false
   runner-home:
     description: Directory that contains actions-runner software and scripts
