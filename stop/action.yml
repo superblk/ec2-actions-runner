@@ -23,8 +23,8 @@ inputs:
     default: ${{ github.repository }}
     required: false
   runner-id:
-    description: GitHub repository runner id, e.g. 53
-    required: true
+    description: GitHub repository runner id, e.g. 53. Optional if using ephemeral runners
+    required: false
   instance-id:
     description: EC2 instance id, e.g. i-0ab3a789090bd84c7
     required: true
@@ -46,10 +46,7 @@ runs:
     - id: main
       shell: bash
       run: |
-        # Offline runners are automatically deleted after 30 days, so we emit a warning for runner deregistration failure
-        if [ -z "$RUNNER_ID" ]; then
-            echo "WARN: Unable to deregister GitHub repository runner (runner ID not available)"
-        else
+        if [ ! -z "$RUNNER_ID" ]; then
             echo "Deregistering GitHub repository runner: $RUNNER_ID ..."
             gh api -X DELETE -H 'Accept: application/vnd.github.v3+json' \
               "repos/$GITHUB_REPO/actions/runners/$RUNNER_ID" || echo "WARN: Failed to deregister GitHub repository runner (GitHub API call failed)"
