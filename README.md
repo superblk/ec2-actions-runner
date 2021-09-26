@@ -30,7 +30,7 @@ See [start/action.yml](start/action.yml) and [stop/action.yml](stop/action.yml) 
 
 💡 EC2 instance ID is automatically assigned as a unique, self-hosted runner label
 
-💡 Do not simply copy these examples verbatim, but adjust action version, AWS region, launch template etc to match your config
+⚠️ Do not simply copy these examples verbatim, but adjust action version, AWS region, launch template name etc to match your config
 
 ### Simple
 
@@ -77,7 +77,7 @@ jobs:
 
 A more fail-safe alternative. Deregisters GitHub runner explicitly (not relying on ephemeral runner auto-deregistration behavior alone). Also leverages EC2 [instance-initiated shutdown](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/terminating-instances.html#Using_ChangingInstanceInitiatedShutdownBehavior) **terminate** behavior for ensuring the EC2 instance is terminated, even if the `stop-runner` job fails to run.
 
-⚠️ For automatic dead-man's switch termination to work, the AMI must include the `at` tool, and the EC2 launch template must specify instance-initiated shutdown behavior as **terminate**.
+⚠️ For the automatic dead-man's switch termination to work, the AMI must include the `at` tool, and the EC2 launch template must specify instance-initiated shutdown behavior as **terminate**.
 
 💡 This example also illustrates the use of extra runner labels and a matrix `main` job, that uses both GitHub-hosted and self-hosted runners.
 
