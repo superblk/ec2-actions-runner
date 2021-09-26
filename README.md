@@ -13,8 +13,8 @@ Inspired by <https://github.com/machulav/ec2-github-runner>
 - AWS credentials with EC2 permissions
   - You can use either a plain IAM user, or assume a role
 - VPC subnet with Internet access
-  - Public subnet (public IP) **or**
-  - Private subnet with NAT gateway
+  - Public subnet (public IP) **OR**
+  - Private subnet and NAT gateway
 - Linux runner AMI (amd64 or arm64), with the following things pre-configured:
   - Non-root user to run actions-runner service as
   - [Actions-runner](https://github.com/actions/runner) v2.283.1+ and required [dependencies](https://github.com/actions/runner/blob/main/docs/start/envlinux.md)
