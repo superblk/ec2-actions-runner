@@ -9,22 +9,30 @@ Inspired by <https://github.com/machulav/ec2-github-runner>
 ## Requirements
 
 - AWS account and VPC network
+  - Default VPC works fine, too
 - AWS credentials with EC2 permissions
-- VPC subnet with Internet access (either assigning public IP or via NAT gateway)
+  - You can use either a plain IAM user or assume a role
+- VPC subnet with Internet access, i.e.
+  - Public subnet (public IP) **or**
+  - Private subnet with NAT gateway
 - Linux runner AMI (amd64 or arm64), with the following things pre-configured:
   - Non-root user to run actions-runner service as
   - [Actions-runner](https://github.com/actions/runner) v2.283.1+ and required [dependencies](https://github.com/actions/runner/blob/main/docs/start/envlinux.md)
   - `git`, `docker`, `curl` and optionally `at` (if using the auto-shutdown feature)
-  - See e.g. <https://github.com/superblk/ec2-actions-runner-ami-linux-arm64>
-- EC2 launch template (AMI, instance type, VPC, security group, spot options etc)
+  - See e.g. <https://github.com/superblk/ec2-actions-runner-ami-linux-arm64> for an example AMI build
+- EC2 launch template (AMI, instance type, VPC subnet, security groups, spot options etc)
   - See example [Cloudformation template](https://gist.github.com/jpalomaki/003c4d173a856cf64c6d35f8869a2de8) that sets up a launch template
 - GitHub personal access token (PAT) with `repo` scope
 
-## Example workflow
-
 See [start/action.yml](start/action.yml) and [stop/action.yml](stop/action.yml) for all available input parameters.
 
-💡 do not simply copy this example verbatim, but adjust action version, AWS region, launch template etc to match your config
+## Example workflows
+
+💡 do not simply copy these examples verbatim, but adjust action version, AWS region, launch template etc to match your config
+
+### Simple workflow
+
+Simple default. Leverages ephemeral runners that are automatically deregistered from GitHub after the `main` job has run.
 
 ```yaml
 jobs:
@@ -61,4 +69,59 @@ jobs:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           instance-id: ${{ needs.start-runner.outputs.instance-id }}
+```
+
+### Advanced
+
+A more fail-safe alternative. Deregisters GitHub runner explicitly (not relying on ephemeral runner auto-deregistration behavior alone). Also leverages EC2 [instance-initiated shutdown](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/terminating-instances.html#Using_ChangingInstanceInitiatedShutdownBehavior) **terminate** behavior for ensuring the EC2 instance is terminated, even if the `stop-runner` job fails to run.
+
+⚠️ For automatic dead-man's switch termination to work, the AMI must include the `at` tool, and the EC2 launch template must specify instance-initiated shutdown behavior as **terminate**.
+
+💡 This example also illustrates the use of extra runner labels and a matrix `main` job that uses both GitHub-hosted and self-hosted runners.
+
+```yaml
+jobs:
+  start-runner:
+    runs-on: ubuntu-20.04
+    steps:
+      - id: runner
+        name: Start runner
+        uses: superblk/ec2-actions-runner/start@<release>
+        with:
+          aws-region: eu-north-1
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-launch-template: LaunchTemplateName=my-special-runner
+          runner-labels: ubuntu-18.04-arm64-${{ github.run_id }}
+          github-token: ${{ secrets.GH_PAT }}
+          auto-shutdown-at: 'now + 3 hours'
+    outputs:
+      instance-id: ${{ steps.runner.outputs.instance-id }}
+      runner-id: ${{ steps.runner.outputs.runner-id }}
+
+  main:
+    needs: start-runner
+    runs-on: ${{ matrix.runner }}
+    strategy:
+      matrix:
+        include:
+          - runner: ubuntu-18.04
+          - runner: ubuntu-18.04-arm64-${{ github.run_id }}
+    steps:
+      - run: uname -a
+
+  stop-runner:
+    if: always()
+    needs: [start-runner, main]
+    runs-on: ubuntu-20.04
+    steps:
+      - name: Stop runner
+        uses: superblk/ec2-actions-runner/stop@<release>
+        with:
+          aws-region: eu-north-1
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          instance-id: ${{ needs.start-runner.outputs.instance-id }}
+          runner-id: ${{ needs.start-runner.outputs.runner-id }}
+          github-token: ${{ secrets.GH_PAT }}
 ```
