@@ -9,10 +9,10 @@ Inspired by <https://github.com/machulav/ec2-github-runner>
 ## Requirements
 
 - AWS account and VPC network
-  - Default VPC works fine, too
+  - A default VPC works fine, too
 - AWS credentials with EC2 permissions
-  - You can use either a plain IAM user or assume a role
-- VPC subnet with Internet access, i.e.
+  - You can use either a plain IAM user, or assume a role
+- VPC subnet with Internet access
   - Public subnet (public IP) **or**
   - Private subnet with NAT gateway
 - Linux runner AMI (amd64 or arm64), with the following things pre-configured:
@@ -28,9 +28,11 @@ See [start/action.yml](start/action.yml) and [stop/action.yml](stop/action.yml) 
 
 ## Example workflows
 
-💡 do not simply copy these examples verbatim, but adjust action version, AWS region, launch template etc to match your config
+💡 EC2 instance ID is automatically assigned as a unique, self-hosted runner label
 
-### Simple workflow
+💡 Do not simply copy these examples verbatim, but adjust action version, AWS region, launch template etc to match your config
+
+### Simple
 
 Simple default. Leverages ephemeral runners that are automatically deregistered from GitHub after the `main` job has run.
 
@@ -77,7 +79,7 @@ A more fail-safe alternative. Deregisters GitHub runner explicitly (not relying 
 
 ⚠️ For automatic dead-man's switch termination to work, the AMI must include the `at` tool, and the EC2 launch template must specify instance-initiated shutdown behavior as **terminate**.
 
-💡 This example also illustrates the use of extra runner labels and a matrix `main` job that uses both GitHub-hosted and self-hosted runners.
+💡 This example also illustrates the use of extra runner labels and a matrix `main` job, that uses both GitHub-hosted and self-hosted runners.
 
 ```yaml
 jobs:
