@@ -18,7 +18,7 @@ Inspired by <https://github.com/machulav/ec2-github-runner>
 - Linux runner AMI (amd64 or arm64), with the following things pre-configured:
   - Non-root user to run actions-runner service as
   - [Actions-runner](https://github.com/actions/runner) v2.283.1+ and required [dependencies](https://github.com/actions/runner/blob/main/docs/start/envlinux.md)
-  - `git`, `docker`, `curl` and optionally `at` (if using the auto-shutdown feature)
+  - `git`, `docker`, `curl` and optionally `at` (if using the `auto-shutdown-at` feature)
   - See e.g. <https://github.com/superblk/ec2-actions-runner-ami-linux-arm64> for an example AMI build
 - EC2 launch template (AMI, instance type, VPC subnet, security groups, spot options etc)
   - See example [Cloudformation template](https://gist.github.com/jpalomaki/003c4d173a856cf64c6d35f8869a2de8) that sets up a launch template
