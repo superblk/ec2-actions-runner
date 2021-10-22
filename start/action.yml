@@ -82,7 +82,7 @@ runs:
         user_data=$(cat <<HERE
         #!/bin/bash
         cd "$RUNNER_HOME"
-        instance_id="\$(curl -s http://169.254.169.254/latest/meta-data/instance-id)"
+        instance_id="\$(cat /var/lib/cloud/data/instance-id)"
         sudo -u "$RUNNER_USER" ./config.sh --unattended $extra_flags --name "\$instance_id" --url "https://github.com/$GITHUB_REPO" --token "$runner_token" --labels "\$instance_id$extra_labels"
         ./svc.sh install "$RUNNER_USER"
         ./svc.sh start
