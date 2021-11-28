@@ -11,7 +11,7 @@ Inspired by <https://github.com/machulav/ec2-github-runner>
 - AWS account and VPC network
   - A default VPC works fine, too
 - AWS credentials with EC2 permissions
-  - You can use either a plain IAM user, or assume a role
+  - You can use [OIDC](https://docs.github.com/en/actions/deployment/security-hardening-your-deployments/configuring-openid-connect-in-amazon-web-services) (recommended) or a plain IAM user
 - VPC subnet with Internet access
   - Public subnet (public IP) **OR**
   - Private subnet and NAT gateway
@@ -70,6 +70,49 @@ jobs:
           aws-region: eu-north-1
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          instance-id: ${{ needs.start-runner.outputs.instance-id }}
+```
+
+### Simple (OIDC)
+
+Same as above, but uses OIDC to assume a role for starting/stopping the runner EC2 instance
+
+```yaml
+jobs:
+  start-runner:
+    permissions:
+      id-token: write
+    runs-on: ubuntu-20.04
+    steps:
+      - id: runner
+        name: Start runner
+        uses: superblk/ec2-actions-runner/start@<release>
+        with:
+          aws-region: eu-north-1
+          aws-role-to-assume: arn:aws:iam::<account id>:role/<role assumable thru OIDC>
+          aws-launch-template: LaunchTemplateName=my-special-runner
+          github-token: ${{ secrets.GH_PAT }}
+    outputs:
+      instance-id: ${{ steps.runner.outputs.instance-id }}
+
+  main:
+    needs: start-runner
+    runs-on: ${{ needs.start-runner.outputs.instance-id }}
+    steps:
+      - run: uname -a
+
+  stop-runner:
+    if: always()
+    permissions:
+      id-token: write
+    needs: [start-runner, main]
+    runs-on: ubuntu-20.04
+    steps:
+      - name: Stop runner
+        uses: superblk/ec2-actions-runner/stop@<release>
+        with:
+          aws-region: eu-north-1
+          aws-role-to-assume: arn:aws:iam::<account id>:role/<role assumable thru OIDC>
           instance-id: ${{ needs.start-runner.outputs.instance-id }}
 ```
 
