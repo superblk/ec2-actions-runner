@@ -11,7 +11,7 @@ Inspired by <https://github.com/machulav/ec2-github-runner>
 - AWS account and VPC network
   - A default VPC works fine, too
 - AWS credentials with EC2 permissions
-  - You can use [OIDC](https://docs.github.com/en/actions/deployment/security-hardening-your-deployments/configuring-openid-connect-in-amazon-web-services) (recommended) or a plain IAM user
+  - You can use [OIDC](https://docs.github.com/en/actions/deployment/security-hardening-your-deployments/configuring-openid-connect-in-amazon-web-services) (recommended) to assume a role, or a plain IAM user
 - VPC subnet with Internet access
   - Public subnet (public IP) **OR**
   - Private subnet and NAT gateway
