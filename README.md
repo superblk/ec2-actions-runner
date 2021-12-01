@@ -39,47 +39,6 @@ Simple default. Leverages ephemeral runners that are automatically deregistered 
 ```yaml
 jobs:
   start-runner:
-    runs-on: ubuntu-20.04
-    steps:
-      - id: runner
-        name: Start runner
-        uses: superblk/ec2-actions-runner/start@<release>
-        with:
-          aws-region: eu-north-1
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-launch-template: LaunchTemplateName=my-special-runner
-          github-token: ${{ secrets.GH_PAT }}
-    outputs:
-      instance-id: ${{ steps.runner.outputs.instance-id }}
-
-  main:
-    needs: start-runner
-    runs-on: ${{ needs.start-runner.outputs.instance-id }}
-    steps:
-      - run: uname -a
-
-  stop-runner:
-    if: always()
-    needs: [start-runner, main]
-    runs-on: ubuntu-20.04
-    steps:
-      - name: Stop runner
-        uses: superblk/ec2-actions-runner/stop@<release>
-        with:
-          aws-region: eu-north-1
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          instance-id: ${{ needs.start-runner.outputs.instance-id }}
-```
-
-### Simple (OIDC)
-
-Same as above, but uses OIDC to assume a role for starting/stopping the runner EC2 instance
-
-```yaml
-jobs:
-  start-runner:
     permissions:
       id-token: write
     runs-on: ubuntu-20.04
@@ -89,7 +48,7 @@ jobs:
         uses: superblk/ec2-actions-runner/start@<release>
         with:
           aws-region: eu-north-1
-          aws-role-to-assume: arn:aws:iam::<account id>:role/<role assumable thru OIDC>
+          aws-role-to-assume: arn:aws:iam::<account>:role/<role>
           aws-launch-template: LaunchTemplateName=my-special-runner
           github-token: ${{ secrets.GH_PAT }}
     outputs:
@@ -112,7 +71,7 @@ jobs:
         uses: superblk/ec2-actions-runner/stop@<release>
         with:
           aws-region: eu-north-1
-          aws-role-to-assume: arn:aws:iam::<account id>:role/<role assumable thru OIDC>
+          aws-role-to-assume: arn:aws:iam::<account>:role/<role>
           instance-id: ${{ needs.start-runner.outputs.instance-id }}
 ```
 
@@ -127,6 +86,8 @@ A more fail-safe alternative. Deregisters GitHub runner explicitly (not relying 
 ```yaml
 jobs:
   start-runner:
+    permissions:
+      id-token: write
     runs-on: ubuntu-20.04
     steps:
       - id: runner
@@ -134,8 +95,7 @@ jobs:
         uses: superblk/ec2-actions-runner/start@<release>
         with:
           aws-region: eu-north-1
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-role-to-assume: arn:aws:iam::<account>:role/<role>
           aws-launch-template: LaunchTemplateName=my-special-runner
           runner-labels: ubuntu-18.04-arm64-${{ github.run_id }}
           github-token: ${{ secrets.GH_PAT }}
@@ -157,6 +117,8 @@ jobs:
 
   stop-runner:
     if: always()
+    permissions:
+      id-token: write
     needs: [start-runner, main]
     runs-on: ubuntu-20.04
     steps:
@@ -164,8 +126,7 @@ jobs:
         uses: superblk/ec2-actions-runner/stop@<release>
         with:
           aws-region: eu-north-1
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-role-to-assume: arn:aws:iam::<account>:role/<role>
           instance-id: ${{ needs.start-runner.outputs.instance-id }}
           runner-id: ${{ needs.start-runner.outputs.runner-id }}
           github-token: ${{ secrets.GH_PAT }}
