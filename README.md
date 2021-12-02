@@ -21,7 +21,7 @@ Inspired by <https://github.com/machulav/ec2-github-runner> ❤️
 
 1. AWS: Configure GitHub OIDC identity provider (GitHub [documentation](https://docs.github.com/en/actions/deployment/security-hardening-your-deployments/configuring-openid-connect-in-amazon-web-services))
     - Use of OIDC is recommended, so that static AWS access keys need not be stored in GitHub secrets
-    - NOTE: if you cannot configure OIDC, it is possible to utilize an IAM user with static access keys
+    - NOTE: if you cannot configure OIDC roles, it is possible to utilize an IAM user with static access keys
 2. AWS: Configure the IAM role that is assumed by the workflow, for starting/stopping runner EC2 instances
     - Example OIDC assume role (trust) policy, that defines who can assume the role (see related [docs](<https://github.com/aws-actions/configure-aws-credentials#sample-iam-role-cloudformation-template>))
 
