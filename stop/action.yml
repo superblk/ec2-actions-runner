@@ -7,13 +7,13 @@ inputs:
     description: AWS region, e.g. eu-west-1
     required: true
   aws-access-key-id:
-    description: AWS access key ID (pass via GitHub secret)
-    required: true
+    description: AWS access key ID (pass via GitHub secret). Required only if **not** using OIDC
+    required: false
   aws-secret-access-key:
-    description: AWS secret access key (pass via GitHub secret)
-    required: true
+    description: AWS secret access key (pass via GitHub secret). Required only if **not** using OIDC
+    required: false
   aws-role-to-assume:
-    description: AWS IAM role to assume (optional)
+    description: AWS IAM role (ARN) to assume. Required if using OIDC (AssumeRoleWithWebIdentity)
     required: false
   github-token:
     description: GitHub auth token (PAT with repo scope, pass via GitHub secret). Optional if using ephemeral runners
