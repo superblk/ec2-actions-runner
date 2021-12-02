@@ -19,11 +19,13 @@ Inspired by <https://github.com/machulav/ec2-github-runner> ❤️
 
 ## Setup
 
-1. AWS: Configure GitHub OIDC identity provider (so that we do not need to store static AWS access keys in GitHub secrets)
-    - See GitHub [docs](https://docs.github.com/en/actions/deployment/security-hardening-your-deployments/configuring-openid-connect-in-amazon-web-services) for more information
+1. AWS: Configure GitHub OIDC identity provider (GitHub [documentation](https://docs.github.com/en/actions/deployment/security-hardening-your-deployments/configuring-openid-connect-in-amazon-web-services))
+    - Use of OIDC is recommended, so that static AWS access keys need not be stored in GitHub secrets
+    - NOTE: if you cannot configure OIDC, it is possible to utilize an IAM user with static access keys
 2. AWS: Configure the IAM role that is assumed by the workflow, for starting/stopping runner EC2 instances
-    - Example OIDC assume role (trust) policy, that defines who can assume the role (see GitHub [docs](<https://github.com/aws-actions/configure-aws-credentials#sample-iam-role-cloudformation-template>))
-      ```
+    - Example OIDC assume role (trust) policy, that defines who can assume the role (see related [docs](<https://github.com/aws-actions/configure-aws-credentials#sample-iam-role-cloudformation-template>))
+
+      ```json
       {
         "Version": "2012-10-17",
         "Statement": [
@@ -46,7 +48,8 @@ Inspired by <https://github.com/machulav/ec2-github-runner> ❤️
       }
       ```
     - Example role policy (inline or customer-managed), that defines the _minimum_ permissions needed for starting/stopping runner EC2 instances
-      ```
+
+      ```json
       {
           "Version": "2012-10-17",
           "Statement": [
