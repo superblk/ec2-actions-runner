@@ -7,10 +7,10 @@ inputs:
     description: AWS region, e.g. eu-west-1
     required: true
   aws-access-key-id:
-    description: AWS access key ID (pass via GitHub secret). Required if **not** using OIDC
+    description: AWS access key ID (pass via GitHub secret). Required only if **not** using OIDC
     required: false
   aws-secret-access-key:
-    description: AWS secret access key (pass via GitHub secret). Required if **not** using OIDC
+    description: AWS secret access key (pass via GitHub secret). Required only if **not** using OIDC
     required: false
   aws-role-to-assume:
     description: AWS IAM role (ARN) to assume. Required if using OIDC (AssumeRoleWithWebIdentity)
