@@ -20,10 +20,9 @@ Inspired by <https://github.com/machulav/ec2-github-runner> ❤️
 ## Setup
 
 1. AWS: Configure GitHub OIDC identity provider (so that we do not need to store static AWS access keys in GitHub secrets)
-    - See <https://docs.github.com/en/actions/deployment/security-hardening-your-deployments/configuring-openid-connect-in-amazon-web-services>
-    - See <https://github.com/aws-actions/configure-aws-credentials#sample-iam-role-cloudformation-template>
+    - See GitHub [docs](https://docs.github.com/en/actions/deployment/security-hardening-your-deployments/configuring-openid-connect-in-amazon-web-services) for more information
 2. AWS: Configure the IAM role that is assumed by the workflow, for starting/stopping runner EC2 instances
-    - Assume role (trust) policy
+    - Example OIDC assume role (trust) policy, that defines who can assume the role (see GitHub [docs](<https://github.com/aws-actions/configure-aws-credentials#sample-iam-role-cloudformation-template>))
       ```
       {
         "Version": "2012-10-17",
@@ -46,7 +45,7 @@ Inspired by <https://github.com/machulav/ec2-github-runner> ❤️
         ]
       }
       ```
-    - Minimal role policy (inline or customer-managed), that defines the permissions needed for starting/stopping runner instances
+    - Example role policy (inline or customer-managed), that defines the _minimum_ permissions needed for starting/stopping runner EC2 instances
       ```
       {
           "Version": "2012-10-17",
@@ -81,7 +80,7 @@ Inspired by <https://github.com/machulav/ec2-github-runner> ❤️
   - See e.g. <https://github.com/superblk/ec2-actions-runner-ami-ubuntu-18.04-arm64> for an example AMI build
 5. AWS: EC2 runner launch template (defines AMI, instance type, VPC subnet, security groups, spot options etc)
   - See example [Cloudformation template](https://gist.github.com/jpalomaki/003c4d173a856cf64c6d35f8869a2de8) that sets up a launch template
-6. GitHub: personal access token (PAT) with `repo` scope
+6. GitHub: personal access token (PAT) with `repo` scope, required for registering self-hosted repository runners
 
 See [start/action.yml](start/action.yml) and [stop/action.yml](stop/action.yml) for all available input parameters.
 
