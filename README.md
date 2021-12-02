@@ -9,7 +9,7 @@ Inspired by <https://github.com/machulav/ec2-github-runner> ❤️
 ## Pre-requisites
 
 - AWS account
-  - Permissions to provision IAM, EC2 and VPC resources on it (to set up the runner scaffolding)
+  - Permissions to provision IAM, EC2 and VPC resources (to set up the runner scaffolding)
 - VPC network
   - Subnet with Internet access (required because self-hosted runners communicate with github.com)
 
@@ -77,12 +77,12 @@ Inspired by <https://github.com/machulav/ec2-github-runner> ❤️
       }
       ```
 4. AWS: Linux runner AMI (amd64 or arm64), with the following things pre-configured:
-  - Non-root user to run actions-runner service as
-  - [Actions-runner](https://github.com/actions/runner) v2.283.1+ and required [dependencies](https://github.com/actions/runner/blob/main/docs/start/envlinux.md)
-  - `git`, `docker`, `curl` and optionally `at` (if using the `auto-shutdown-at` feature)
-  - See e.g. <https://github.com/superblk/ec2-actions-runner-ami-ubuntu-18.04-arm64> for an example AMI build
+    - Non-root user to run the actions-runner service as
+    - [Actions-runner](https://github.com/actions/runner) v2.283.1+ and required [dependencies](https://github.com/actions/runner/blob/main/docs/start/envlinux.md)
+    - `git`, `docker`, `curl` and optionally `at` (if using the `auto-shutdown-at` feature)
+    - See e.g. <https://github.com/superblk/ec2-actions-runner-ami-ubuntu-18.04-arm64> for an example AMI build
 5. AWS: EC2 runner launch template (defines AMI, instance type, VPC subnet, security groups, spot options etc)
-  - See example [Cloudformation template](https://gist.github.com/jpalomaki/003c4d173a856cf64c6d35f8869a2de8) that sets up a launch template
+    - See example [Cloudformation template](https://gist.github.com/jpalomaki/003c4d173a856cf64c6d35f8869a2de8) that sets up a launch template
 6. GitHub: personal access token (PAT) with `repo` scope, required for registering self-hosted repository runners
 
 See [start/action.yml](start/action.yml) and [stop/action.yml](stop/action.yml) for all available input parameters.
