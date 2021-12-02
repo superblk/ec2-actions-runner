@@ -85,13 +85,13 @@ Inspired by <https://github.com/machulav/ec2-github-runner> ❤️
     - See example [Cloudformation template](https://gist.github.com/jpalomaki/003c4d173a856cf64c6d35f8869a2de8) that sets up a launch template
 6. GitHub: personal access token (PAT) with `repo` scope, required for registering self-hosted repository runners
 
-See [start/action.yml](start/action.yml) and [stop/action.yml](stop/action.yml) for all available input parameters.
-
 ## Example workflows
 
 💡 EC2 instance ID is automatically assigned as a unique, self-hosted runner label
 
 ⚠️ Do not simply copy these examples verbatim, but adjust action version, AWS region, launch template name etc to match your configuration
+
+See [start/action.yml](start/action.yml) and [stop/action.yml](stop/action.yml) for all available input parameters
 
 ### Simple
 
