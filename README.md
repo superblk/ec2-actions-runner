@@ -1,28 +1,87 @@
 # ec2-actions-runner
 
-⚠️ This is a new project and is very experimental
+⚠️ This is a new project and as such, backwards-incompatible changes may occur between releases
 
 Composite actions for managing an on-demand, self-hosted GitHub actions _repository_ runner (Linux on EC2).
 
-Inspired by <https://github.com/machulav/ec2-github-runner>
+Inspired by <https://github.com/machulav/ec2-github-runner> ❤️
 
-## Requirements
+## Pre-requisites
 
-- AWS account and VPC network
-  - A default VPC works fine, too
-- AWS credentials with EC2 permissions
-  - You can use [OIDC](https://docs.github.com/en/actions/deployment/security-hardening-your-deployments/configuring-openid-connect-in-amazon-web-services) (recommended) to assume a role, or a plain IAM user
-- VPC subnet with Internet access
-  - Public subnet (public IP) **OR**
-  - Private subnet and NAT gateway
-- Linux runner AMI (amd64 or arm64), with the following things pre-configured:
+- AWS account
+  - Permissions to provision IAM, EC2 and VPC resources on it (to set up the runner scaffolding)
+- VPC network
+  - Subnet with Internet access (required because self-hosted runners communicate with github.com)
+
+## Limitations
+
+- GitHub Enterprise Server (GHES) is not currently supported
+
+## Setup
+
+1. AWS: Configure GitHub OIDC identity provider (so that we do not need to store static AWS access keys in GitHub secrets)
+    - See <https://docs.github.com/en/actions/deployment/security-hardening-your-deployments/configuring-openid-connect-in-amazon-web-services>
+    - See <https://github.com/aws-actions/configure-aws-credentials#sample-iam-role-cloudformation-template>
+2. AWS: Configure the IAM role that is assumed by the workflow, for starting/stopping runner EC2 instances
+    - Assume role (trust) policy
+      ```
+      {
+        "Version": "2012-10-17",
+        "Statement": [
+          {
+            "Effect": "Allow",
+            "Principal": {
+              "Federated": "arn:aws:iam::<account>:oidc-provider/token.actions.githubusercontent.com"
+            },
+            "Action": [
+              "sts:AssumeRoleWithWebIdentity",
+              "sts:TagSession"
+            ],
+            "Condition": {
+              "StringLike": {
+                "token.actions.githubusercontent.com:sub": "repo:<owner>/<repository>:*"
+              }
+            }
+          }
+        ]
+      }
+      ```
+    - Minimal role policy (inline or customer-managed), that defines the permissions needed for starting/stopping runner instances
+      ```
+      {
+          "Version": "2012-10-17",
+          "Statement": [
+              {
+                  "Effect": "Allow",
+                  "Action": [
+                      "ec2:RunInstances",
+                      "ec2:TerminateInstances"
+                  ],
+                  "Resource": "*"
+              },
+              {
+                  "Effect": "Allow",
+                  "Action": [
+                      "ec2:CreateTags"
+                  ],
+                  "Resource": "*",
+                  "Condition": {
+                      "StringEquals": {
+                          "ec2:CreateAction": "RunInstances"
+                      }
+                  }
+              }
+          ]
+      }
+      ```
+4. AWS: Linux runner AMI (amd64 or arm64), with the following things pre-configured:
   - Non-root user to run actions-runner service as
   - [Actions-runner](https://github.com/actions/runner) v2.283.1+ and required [dependencies](https://github.com/actions/runner/blob/main/docs/start/envlinux.md)
   - `git`, `docker`, `curl` and optionally `at` (if using the `auto-shutdown-at` feature)
-  - See e.g. <https://github.com/superblk/ec2-actions-runner-ami-linux-arm64> for an example AMI build
-- EC2 launch template (AMI, instance type, VPC subnet, security groups, spot options etc)
+  - See e.g. <https://github.com/superblk/ec2-actions-runner-ami-ubuntu-18.04-arm64> for an example AMI build
+5. AWS: EC2 runner launch template (defines AMI, instance type, VPC subnet, security groups, spot options etc)
   - See example [Cloudformation template](https://gist.github.com/jpalomaki/003c4d173a856cf64c6d35f8869a2de8) that sets up a launch template
-- GitHub personal access token (PAT) with `repo` scope
+6. GitHub: personal access token (PAT) with `repo` scope
 
 See [start/action.yml](start/action.yml) and [stop/action.yml](stop/action.yml) for all available input parameters.
 
@@ -30,7 +89,7 @@ See [start/action.yml](start/action.yml) and [stop/action.yml](stop/action.yml) 
 
 💡 EC2 instance ID is automatically assigned as a unique, self-hosted runner label
 
-⚠️ Do not simply copy these examples verbatim, but adjust action version, AWS region, launch template name etc to match your config
+⚠️ Do not simply copy these examples verbatim, but adjust action version, AWS region, launch template name etc to match your configuration
 
 ### Simple
 
