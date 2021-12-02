@@ -46,10 +46,11 @@ runs:
     - id: main
       shell: bash
       run: |
-        if [ ! -z "$RUNNER_ID" ]; then
+        # We do not fail the job on missing runner ID, because offline and ephemeral runners are automatically deregistered
+        if [ -n "$RUNNER_ID" ]; then
             echo "Deregistering GitHub repository runner: $RUNNER_ID ..."
-            gh api -X DELETE -H 'Accept: application/vnd.github.v3+json' \
-              "repos/$GITHUB_REPO/actions/runners/$RUNNER_ID" || echo "WARN: Failed to deregister GitHub repository runner (GitHub API call failed)"
+            gh api -X DELETE "repos/$GH_REPO/actions/runners/$RUNNER_ID" \
+              || echo "WARN: Failed to deregister GitHub repository runner (GitHub API call failed)"
         fi
         
         # Failure to terminate the EC2 instance will incur unnecessary costs, so we fail the job to ensure the user notices
@@ -65,5 +66,5 @@ runs:
         GH_TOKEN: ${{ inputs.github-token }}
         AWS_DEFAULT_REGION: ${{ inputs.aws-region }}
         RUNNER_ID: ${{ inputs.runner-id }}
-        GITHUB_REPO: ${{ inputs.github-repo }}
+        GH_REPO: ${{ inputs.github-repo }}
         INSTANCE_ID: ${{ inputs.instance-id }}
