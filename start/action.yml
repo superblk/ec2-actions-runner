@@ -13,7 +13,7 @@ inputs:
     description: AWS secret access key (pass via GitHub secret). Required only if **not** using OIDC
     required: false
   aws-role-to-assume:
-    description: AWS IAM role (ARN) to assume. Required if using OIDC (AssumeRoleWithWebIdentity)
+    description: AWS IAM role (ARN) to assume, for launching the instance. Required if using OIDC (AssumeRoleWithWebIdentity)
     required: false
   aws-launch-template:
     description: AWS EC2 launch template (AWS CLI format, e.g. LaunchTemplateId=lt-0abcd290751193123)

@@ -13,7 +13,7 @@ inputs:
     description: AWS secret access key (pass via GitHub secret). Required only if **not** using OIDC
     required: false
   aws-role-to-assume:
-    description: AWS IAM role (ARN) to assume. Required if using OIDC (AssumeRoleWithWebIdentity)
+    description: AWS IAM role (ARN) to assume, for terminating the instance. Required if using OIDC (AssumeRoleWithWebIdentity)
     required: false
   github-token:
     description: GitHub auth token (PAT with repo scope, pass via GitHub secret). Optional if using ephemeral runners
