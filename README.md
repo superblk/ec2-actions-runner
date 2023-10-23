@@ -2,7 +2,7 @@
 
 Composite actions for managing an on-demand, self-hosted GitHub actions _repository_ runner (Linux on EC2)
 
-⚠️ This is a new project and as such, backwards-incompatible changes may occur between releases
+⚠️ This project is deprecated and is no longer maintained. Have a look at e.g. [terraform-aws-github-runner](https://github.com/philips-labs/terraform-aws-github-runner) instead.
 
 ⚠️ Self-hosted runners should **not** be used with _public_ repositories (see GitHub [documentation](https://docs.github.com/en/actions/hosting-your-own-runners/about-self-hosted-runners#self-hosted-runner-security))
 
